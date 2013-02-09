@@ -75,5 +75,5 @@
    :headers {"Content-Type" "text/html;charset=UTF-8"}
    :body    (content)})
 
-(defn boot []
-  (run-jetty #'handler {:port 8080}))
+(defn -main [& args]
+  (run-jetty #'handler {:port 8186}))

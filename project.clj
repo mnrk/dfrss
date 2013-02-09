@@ -7,4 +7,5 @@
                  [enlive "1.0.1"]
                  [clj-rss "0.1.2"]
                  [ring/ring-core "1.1.8"]
-                 [ring/ring-jetty-adapter "1.1.8"]])
+                 [ring/ring-jetty-adapter "1.1.8"]]
+  :main dfrss.core)
