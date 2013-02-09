@@ -72,7 +72,7 @@
 (defn handler
   [req]
   {:status  200
-   :headers {"Content-Type" "text/html;charset=UTF-8"}
+   :headers {"Content-Type" "text/xml;charset=UTF-8"}
    :body    (content)})
 
 (defn -main [& args]
