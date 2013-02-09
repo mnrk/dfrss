@@ -1,5 +1,7 @@
 (ns dfrss.core
-  (:require [net.cgrand.enlive-html :as html]))
+  (:use ring.adapter.jetty)
+  (:require [net.cgrand.enlive-html :as html])
+  (:require [clj-rss.core :as rss]))
 
 (def select html/select)
 
@@ -7,9 +9,14 @@
 
 (defn fetch-url
   "Retrieves the web page specified by the url and
-   makes an html-resource out of it which is used
-   by enlive."
-  [url] (html/html-resource (java.net.URL. url)))
+   encoding and makes an html-resource out of it which
+   is used by enlive."
+  [encoding url]
+  (-> url
+      java.net.URL.
+      .getContent (java.io.InputStreamReader. encoding)
+      html/html-resource))
+
 
 (defn articles
   "Takes enlive resource and returns a list of whole article elements"
@@ -47,10 +54,26 @@
    [res]
    [(article-name res) (article-url res) (article-author res)])
 
-(defn foo
+(defn feed
+  [articles]
+  (->> articles
+       (map (fn [[name url auth]] {:title name :link url :description auth}))
+       (apply rss/channel-xml)))
+
+(defn content
   "I don't do a whole lot."
   []
   (->> "http://www.dfens-cz.com/"
-       fetch-url
+       (fetch-url "Cp1250")
        articles
-       (map article)))
+       (map article)
+       feed))
+
+(defn handler
+  [req]
+  {:status  200
+   :headers {"Content-Type" "text/html;charset=UTF-8"}
+   :body    (content)})
+
+(defn boot []
+  (run-jetty #'handler {:port 8080}))
